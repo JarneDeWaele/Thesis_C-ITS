@@ -3,7 +3,6 @@
 import gambit
 import numpy as np
 import pandas as pd
-import csv
 
 results = pd.read_csv('payoffs.csv', header=None, skiprows = [0]) #Check later: possible to read from Github
 
@@ -28,22 +27,13 @@ for i in range(amt_players):
 
 strategies = ["Baseball", "Ballet"]
 
+# Only works for games with 2 players
 for i in range(amt_players):
     g.players[i].strategies[0].label = strategies[0]
     g.players[i].strategies[1].label = strategies[1]
 
-# g.players[0].strategies[0].label = "Baseball"
-# g.players[0].strategies[1].label = "Ballet"
-# g.players[1].strategies[0].label = "Baseball"
-# g.players[1].strategies[1].label = "Ballet"
-
-# print(g.players[0].strategies)
-
-#NEXT UP: payoffs in dictionary
-
-print("Start init game")
 counter = 0
-print(amt_players)
+
 for i in range(amt_players):
     for j in range(amt_players):
         # print(i, j)
@@ -55,7 +45,6 @@ for i in range(amt_players):
 
 
 solver = gambit.nash.ExternalEnumMixedSolver().solve(g)
-for i in range(len(solver)):
-    print(g.players)
+
 for i in range(len(solver)):
     print(solver[i])
