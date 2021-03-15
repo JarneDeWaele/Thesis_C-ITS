@@ -3,6 +3,7 @@
 import gambit
 import numpy as np
 import pandas as pd
+# import payoff builder
 
 results = pd.read_csv('payoffs.csv', header=None, skiprows = [0]) #Check later: possible to read from Github
 
