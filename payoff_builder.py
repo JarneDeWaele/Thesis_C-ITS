@@ -4,7 +4,7 @@ import itertools
 
 # amt_strategies = 2
 # brands = ["VW", "Stellantis", "Renault", "BMW", "Hyundai", "Toyota",
-#           "Daimler", "Ford", "Volvo", "Nissan"]
+#            "Daimler", "Ford", "Volvo", "Nissan"]
 # brands = ["1", "2", "3", "4"]
 # amt_brands = len(brands)
 # shares = [0.257, 0.227, 0.102, 0.072, 0.071, 0.069, 0.042, 0.051, 0.026, 0.02]
@@ -18,7 +18,7 @@ def benefit(x, k=10):
     if x < 0 or x > 1:
         raise ValueError("x is not a valid number")
     else:
-        return 1/(1+np.exp(-k*(x-0.5)))
+        return np.around(1/(1+np.exp(-k*(x-0.5))), 3)
 
 def build_payoff_df(brands, shares, amt_strat = 2):
 
@@ -35,8 +35,8 @@ def build_payoff_df(brands, shares, amt_strat = 2):
                 wifi_share += s[j]
             else:
                 cellular_share += s[j]
-        list_of_strategies[i].append(wifi_share)
-        list_of_strategies[i].append(cellular_share)
+        list_of_strategies[i].append(np.around(wifi_share,3))
+        list_of_strategies[i].append(np.around(cellular_share,3))
 
         for p in range(b):
             b_strat_one = benefit(list_of_strategies[i][b])
@@ -50,4 +50,7 @@ def build_payoff_df(brands, shares, amt_strat = 2):
     payoffs = ["Payoff P" +str(i+1) for i in range(b)]
     col = brands + strats + payoffs
     df = pd.DataFrame.from_records(list_of_strategies, columns=col)
+    df.to_csv(r'/home/jarne/PycharmProjects/jarnedewaele/payoffs.csv', index=False)
     return df
+
+
