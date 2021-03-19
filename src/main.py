@@ -11,12 +11,13 @@ from definitions import ASSETS_PATH
 #            "Daimler", "Ford", "Volvo", "Nissan"]
 # shares = [0.257, 0.227, 0.102, 0.072, 0.071, 0.069, 0.042, 0.051, 0.026, 0.02]
 
-brands = ["VW", "Stellantis", "Renault", "BMW", "Hyundai", "Toyota"]
-shares = [0.257, 0.227, 0.102, 0.072, 0.071, 0.069]
+
+brands = ["VW", "Stellantis", "Renault"]
+shares = [0.257, 0.227, 0.102]
 
 build_payoff_df(brands, shares)
 results = pd.read_csv(os.path.join(ASSETS_PATH, 'payoffs.csv'), header=None,
-                      skiprows=[0])  # Check later: possible to read from Github
+                      skiprows=[0])
 
 print(results)
 
@@ -31,9 +32,8 @@ for i in range(amt_players):
 
 print(g.players)
 
-strategies = ["Wifi", "Cellular"]
+strategies = ["ITS-G5", "C-V2X"]
 
-# Only works for games with 2 strategies
 for i in range(amt_players):
     for j in range(amt_strat):
         g.players[i].strategies[j].label = strategies[j]
@@ -45,22 +45,24 @@ counter = 0
 for a in range(amt_strat):
     for b in range(amt_strat):
         for c in range(amt_strat):
-            for d in range(amt_strat):
-                for e in range(amt_strat):
-                    for f in range(amt_strat):
+            # for d in range(amt_strat):
+            #     for e in range(amt_strat):
+            #         for f in range(amt_strat):
                         # for g in range(amt_strat):
                         #     for h in range(amt_strat):
                         #         for i in range(amt_strat):
                         #             for j in range(amt_strat):
 
-                        for p in range(amt_players):
-                            g[a, b, c, d, e, f][p] = int(results[amt_players + amt_strat + p][counter])
-                            # g[i,j][p] = int(results[amt_players+1][counter])
-                        counter += 1
+            for p in range(amt_players):
+                g[a, b, c][p] = int(results[amt_players + amt_strat + p][counter])
+                # g[i,j][p] = int(results[amt_players+1][counter])
+            counter += 1
 
-#
-#
+
+
 # solver = gambit.nash.ExternalEnumMixedSolver().solve(g)
-#
-# for i in range(len(solver)):
-#     print(solver[i])
+# solver = gambit.nash.simpdiv_solve(g, external=False)
+solver = gambit.nash.enumpure_solve(g, use_strategic=True, external=False)
+for i in range(len(solver)):
+    print(solver[i])
+print(len(solver))

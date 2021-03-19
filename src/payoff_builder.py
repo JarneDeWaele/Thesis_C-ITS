@@ -4,18 +4,7 @@ import itertools
 import os
 from definitions import ASSETS_PATH
 
-# amt_strategies = 2
-# brands = ["VW", "Stellantis", "Renault", "BMW", "Hyundai", "Toyota",
-#            "Daimler", "Ford", "Volvo", "Nissan"]
-# brands = ["1", "2", "3", "4"]
-# amt_brands = len(brands)
-# shares = [0.257, 0.227, 0.102, 0.072, 0.071, 0.069, 0.042, 0.051, 0.026, 0.02]
-# shares = [0.1, 0.2, 0.3, 0.4]
-# shares_total = np.sum(shares)
-# shares_norm = [i/shares_total for i in shares]
-
 # brands_and_shares = dict(zip(brands, shares_norm))
-
 
 def benefit(x, k=10):
     if x < 0 or x > 1:
@@ -55,6 +44,7 @@ def build_payoff_df(brands, shares, amt_strat=2):
     col = brands + strats + payoffs
     df = pd.DataFrame.from_records(list_of_strategies, columns=col)
     df.to_csv(os.path.join(ASSETS_PATH, 'payoffs.csv'), index=False)
+    # df.to_csv('payoffs.csv', index=False)
     return df
 
 
