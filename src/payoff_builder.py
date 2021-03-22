@@ -13,8 +13,12 @@ def benefit(x, k=10):
         return np.around(1/(1+np.exp(-k*(x-0.5))), 3)
 
 
-def build_payoff_df(brands, shares, amt_strat=2):
-
+def build_payoff_df(n, brand=["VW", "Stellantis", "Renault", "BMW", "Hyundai", "Toyota",
+           "Daimler", "Ford", "Volvo", "Nissan"],
+                    share = [0.257, 0.227, 0.102, 0.072, 0.071, 0.069,
+                              0.042, 0.051, 0.026, 0.02], amt_strat=2, name = 'payoffs.csv'):
+    brands = brand[0:n]
+    shares = share[0:n]
     b = len(brands)
     s = [i/sum(shares) for i in shares]
     list_of_strategies = [list(i) for i in itertools.product([0, 1], repeat=b)]
@@ -35,15 +39,15 @@ def build_payoff_df(brands, shares, amt_strat=2):
             b_strat_one = benefit(list_of_strategies[i][b])
             b_strat_two = benefit(list_of_strategies[i][b+1])
             if list_of_strategies[i][p] == 0:
-                list_of_strategies[i].append(b_strat_one)
+                list_of_strategies[i].append(b_strat_one*1000)
             else:
-                list_of_strategies[i].append(b_strat_two)
+                list_of_strategies[i].append(b_strat_two*1000)
 
     strats = ["Share strategy " + str(i) for i in range(amt_strat)]
     payoffs = ["Payoff P" + str(i+1) for i in range(b)]
     col = brands + strats + payoffs
     df = pd.DataFrame.from_records(list_of_strategies, columns=col)
-    df.to_csv(os.path.join(ASSETS_PATH, 'payoffs.csv'), index=False)
+    df.to_csv(os.path.join(ASSETS_PATH, name), index=False)
     # df.to_csv('payoffs.csv', index=False)
     return df
 
@@ -51,5 +55,6 @@ def build_payoff_df(brands, shares, amt_strat=2):
 if __name__ == '__main__':
     brands = ["VW", "Stellantis", "Renault", "BMW", "Hyundai", "Toyota"]
     shares = [0.257, 0.227, 0.102, 0.072, 0.071, 0.069]
-    df = build_payoff_df(brands, shares)
+    n = len(brands)
+    df = build_payoff_df(n)
     print(df.head())
