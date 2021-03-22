@@ -88,9 +88,9 @@ g[1, 1, 1][2] = 993
 
 
 
-solver = gambit.nash.ExternalEnumPureSolver().solve(g)
+# solver = gambit.nash.ExternalEnumPureSolver().solve(g)
 # solver = gambit.nash.simpdiv_solve(g, external=False)
-# solver = gambit.nash.enumpure_solve(g, use_strategic=True, external=False)
+solver = gambit.nash.enumpure_solve(g, use_strategic=True)
 for i in range(len(solver)):
     print(solver[i])
 print(len(solver))
