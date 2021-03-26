@@ -54,6 +54,6 @@ def generate_text(amt_players, amt_strat=2, name='payoffs.csv'):
                         counter += 1
 
 #Amount of players
-n  = 3
+n  = 2
 build_payoff_df(n, name = 'test_payoffs.csv')
 generate_text(n, name = 'test_payoffs.csv')
