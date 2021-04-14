@@ -27,6 +27,9 @@ def init_penetration():
 
     df = pd.DataFrame({"total_cars": [get_new_total_cars(242.73)],
                        "new_cars": [0.0],
+                       "new_cars_share": [0.0],
+                       "itsg5_shares": [0.0],
+                       "cv2x_shares": [0.0],
                        "new_itsg5": [0.0],
                        "new_cv2x": [0.0],
                        "removed_cars": [0.0],
@@ -51,7 +54,7 @@ def get_penetration():
     itsg5_penetration = last_row["itsg5_penetration"].values[0]
     cv2x_penetration = last_row["cv2x_penetration"].values[0]
 
-    return {"itsg5":itsg5_penetration, "cv2x": cv2x_penetration}
+    return {"itsg5": itsg5_penetration, "cv2x": cv2x_penetration}
 
 
 def get_removed_cars(total_cars):
@@ -121,7 +124,7 @@ def get_scrapped_cars(new_cars_list):
     return total_scrapped_cars
 
 
-def update_penetration(itsg5_share, cv2x_share, new_car_share=1/7):
+def update_penetration(itsg5_share, cv2x_share, new_car_share=1 / 7):
     """ Updates penetration file with outcome of game
     Assumption: one game per year
     1/7th of fleet makes decision per year
@@ -141,8 +144,10 @@ def update_penetration(itsg5_share, cv2x_share, new_car_share=1/7):
     new_cars = get_new_cars(total_cars_previous_period, total_cars, removed_cars)
 
     # new cits cars
-    new_itsg5 = new_cars * new_car_share * itsg5_share
-    new_cv2x = new_cars * new_car_share * cv2x_share
+    sumprod_itsg5 = np.dot(df["new_cars_share"].values, df["itsg5_shares"].values) + new_car_share * itsg5_share
+    sumprod_cv2x = np.dot(df["new_cars_share"].values, df["cv2x_shares"].values) + new_car_share * cv2x_share
+    new_itsg5 = new_cars * sumprod_itsg5
+    new_cv2x = new_cars * sumprod_cv2x
 
     # scrapped cits cars
     scrapped_itsg5 = get_scrapped_cars(np.append(df["scrapped_itsg5"].values, new_itsg5))
@@ -159,6 +164,9 @@ def update_penetration(itsg5_share, cv2x_share, new_car_share=1/7):
 
     new_df = df.append({"total_cars": total_cars,
                         "new_cars": new_cars,
+                        "new_cars_share": new_car_share,
+                        "itsg5_shares": itsg5_share,
+                        "cv2x_shares": cv2x_share,
                         "new_itsg5": new_itsg5,
                         "new_cv2x": new_cv2x,
                         "removed_cars": removed_cars,
@@ -180,12 +188,12 @@ if __name__ == "__main__":
 
     # test
     import random
+
     for i in range(7):  # 7 years
         rand_float = np.random.random()
-        update_penetration(rand_float, 1-rand_float, new_car_share=1/7)
+        update_penetration(rand_float, 1 - rand_float, new_car_share=1 / 7)
 
     print(get_penetration())
 
     result_df = read_penetration()
     print(result_df)
-
