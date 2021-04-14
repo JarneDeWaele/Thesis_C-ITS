@@ -124,6 +124,25 @@ def get_scrapped_cars(new_cars_list):
     return total_scrapped_cars
 
 
+def get_new_cits_cars(cv2x_share, df, itsg5_share, new_car_share, new_cars):
+    """ Get amount of new C-ITS cars based on last complete renewal cycle"""
+    amount_years_to_full_revision = int(1/new_car_share)
+    slice_year = amount_years_to_full_revision - 1  # previous n-1 periods + current period = full revision
+    if len(df) < amount_years_to_full_revision:
+        sumprod_itsg5 = np.dot(df["new_cars_share"].values, df["itsg5_shares"].values) + new_car_share * itsg5_share
+        sumprod_cv2x = np.dot(df["new_cars_share"].values, df["cv2x_shares"].values) + new_car_share * cv2x_share
+    else:
+        sumprod_itsg5 = np.dot(df["new_cars_share"].values[-slice_year:],
+                               df["itsg5_shares"].values[-slice_year:]) \
+                        + new_car_share * itsg5_share
+        sumprod_cv2x = np.dot(df["new_cars_share"].values[-slice_year:],
+                              df["cv2x_shares"].values[-slice_year:]) \
+                       + new_car_share * cv2x_share
+    new_itsg5 = new_cars * sumprod_itsg5
+    new_cv2x = new_cars * sumprod_cv2x
+    return new_cv2x, new_itsg5
+
+
 def update_penetration(itsg5_share, cv2x_share, new_car_share=1 / 7):
     """ Updates penetration file with outcome of game
     Assumption: one game per year
@@ -144,10 +163,7 @@ def update_penetration(itsg5_share, cv2x_share, new_car_share=1 / 7):
     new_cars = get_new_cars(total_cars_previous_period, total_cars, removed_cars)
 
     # new cits cars
-    sumprod_itsg5 = np.dot(df["new_cars_share"].values, df["itsg5_shares"].values) + new_car_share * itsg5_share
-    sumprod_cv2x = np.dot(df["new_cars_share"].values, df["cv2x_shares"].values) + new_car_share * cv2x_share
-    new_itsg5 = new_cars * sumprod_itsg5
-    new_cv2x = new_cars * sumprod_cv2x
+    new_cv2x, new_itsg5 = get_new_cits_cars(cv2x_share, df, itsg5_share, new_car_share, new_cars)
 
     # scrapped cits cars
     scrapped_itsg5 = get_scrapped_cars(np.append(df["scrapped_itsg5"].values, new_itsg5))
@@ -189,7 +205,7 @@ if __name__ == "__main__":
     # test
     import random
 
-    for i in range(7):  # 7 years
+    for i in range(10):  # 7 years
         rand_float = np.random.random()
         update_penetration(rand_float, 1 - rand_float, new_car_share=1 / 7)
 
