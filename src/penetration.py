@@ -205,9 +205,9 @@ if __name__ == "__main__":
     # test
     import random
 
-    for i in range(10):  # 7 years
+    for i in range(10):  # 7 years for 1 revision cycle
         rand_float = np.random.random()
-        update_penetration(rand_float, 1 - rand_float, new_car_share=1 / 7)
+        update_penetration(rand_float, 1 - rand_float, new_car_share=1 / 7)  # 1/7: default
 
     print(get_penetration())
 
