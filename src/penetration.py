@@ -8,14 +8,14 @@ def read_penetration():
     return pd.read_csv(os.path.join(ASSETS_PATH, "penetration.csv"))
 
 
-def get_new_total_cars(total_cars_previous):
+def get_new_total_cars(total_cars_previous, growth = 0.018):
     """
     242,727,242 car in 2019, 1.8% growth rate in 2019
     Assumption: constant growth rate  TODO Jarne: check for more historical growth rate?
     Source: https://www.acea.be/uploads/publications/report-vehicles-in-use-europe-january-2021.pdf
     :return: amount of cars for given year, in million cars
     """
-    return total_cars_previous * (1 + 0.018)
+    return total_cars_previous * (1 + growth)
 
 
 def init_penetration():
@@ -152,7 +152,7 @@ def update_penetration(itsg5_share, cv2x_share, new_car_share=1 / 7):
     :param cv2_share: amount of new c-its cars equipped with cv2x
     :param new_car_share: amount of new cars equipped with cits
     """
-    assert itsg5_share + cv2x_share <= 1, "Please provid valid shares for its-g5 and c-v2x"
+    assert itsg5_share + cv2x_share <= 1, "Please provide valid shares for its-g5 and c-v2x"
     assert new_car_share <= 1, "Please provide new car share smaller than one"
 
     df = read_penetration()
