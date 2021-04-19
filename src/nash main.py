@@ -3,13 +3,21 @@ import numpy as np
 import os
 from definitions import ASSETS_PATH
 from src.payoff import *
+from src.penetration import *
 
 
-def get_pure_nash_equilibria():
+# init file
+init_penetration()
+
+
+def play_game(strategies, printing=False):
     # Step 1: build payoff matrices for both players (the 2 consortia)
-    payoff_c2c_cc, payoff_5gaa = build_payoff_matrix()
-    print(payoff_c2c_cc)
-    print(payoff_5gaa)
+    payoff_c2c_cc, payoff_5gaa = build_payoff_matrix(strategies)
+
+    if printing:
+
+        print(payoff_c2c_cc)
+        print(payoff_5gaa)
 
     # Step 2: build the game using the nashpy library
     phase0_game = nash.Game(payoff_c2c_cc, payoff_5gaa)
@@ -44,6 +52,32 @@ def get_pure_nash_equilibria():
     print(pure_strategies_5gaa)
 
     # Step 4: update penetration
+    strategy_c2c = 0
+    strategy_5gaa = 0
+    for counter, value in enumerate(pure_strategies_c2c_cc['C2C-CC strategy 1']):
+        if value == 1:
+            strategy_c2c = strategies[counter]
+    for counter, value in enumerate(pure_strategies_5gaa['5GAA strategy 1']):
+        if value == 1:
+            strategy_5gaa = strategies[counter]
+    # print(strategy_c2c)
+    # print(strategy_5gaa)
 
-get_pure_nash_equilibria()
+    share_c2c_cc, share_5gaa = get_consortia_shares()
+
+    itsg5_share = strategy_c2c * share_c2c_cc + strategy_5gaa * share_5gaa
+    cv2x_share = 1 - itsg5_share
+
+    print(itsg5_share)
+    print(cv2x_share)
+
+    update_penetration(itsg5_share, cv2x_share, new_car_share=1 / 7)  # 1/7: default
+
+
+for year in range(20):
+    print('#### THIS IS THE '+ str(year) + ' TH YEAR ####')
+    play_game([0, 0.25, 0.50, 0.75, 1], printing=False)
+
+
+
 
