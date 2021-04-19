@@ -74,7 +74,7 @@ def get_new_cars(total_cars_previous_period, total_cars, removed_cars):
     :param total_cars_previous_period: total cars previous time period
     :param total_cars: output of get_new_total_cars
     :param removed_cars: output of get_removed_cars
-    :return: amount of newly introduced cars per year
+    :return: amount of newly introduced cars per year ToDo based on source
     """
     incremental_growth = total_cars - total_cars_previous_period
     return removed_cars + incremental_growth
